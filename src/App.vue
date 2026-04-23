@@ -1,14 +1,14 @@
 <script setup lang="ts">
-  import { RouterLink, RouterView } from 'vue-router'
-  import { ref, onMounted, onUnmounted } from 'vue';
-  
+  import { useRoute } from 'vue-router'
+  import { computed, ref, onMounted, onUnmounted } from 'vue';
+
   const canvasRef = ref<HTMLCanvasElement | null>(null);
   let animationFrameId: number;
   const particles: Array<{ x: number; y: number; r: number; vx: number; vy: number; alpha: number }> = [];
 
   const initParticles = () => {
     const canvas = canvasRef.value;
-    if (!canvas) return; // Se il canvas non c'è, si ferma qui (era questo il tuo problema)
+    if (!canvas) return;
     
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -56,7 +56,7 @@
     animate();
   };
 
-  onMounted(() => {
+  onMounted(async () => {
     initParticles();
   });
 
@@ -112,9 +112,33 @@ body, html {
   z-index: 1; 
   pointer-events: none;
 }
-
-main {
-  position: relative;
-  z-index: 2;
-}
 </style>
+
+<!-- <style scoped>
+/* Fade transition for the router view */
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.45s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* transition for the hotspot group */
+.hotspot-group-enter-active, .hotspot-group-leave-active {
+  transition: opacity 0.45s ease;
+}
+
+/* stagger on enter */
+.hotspot-group-enter-active {
+  transition-delay: calc(var(--stagger, 0) * 500ms);
+}
+/* no stagger on leave */
+.hotspot-group-leave-active {
+  transition-delay: 0;
+}
+.hotspot-group-enter-from,
+.hotspot-group-leave-to {
+  opacity: 0;
+}
+</style> -->
