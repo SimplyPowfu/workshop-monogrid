@@ -16,5 +16,5 @@ export function createAnimation(model: Object3D) {
 const BOTTLE_ROTATION = 0.1
 
 export function updateAnimation (bottle: Object3D, delta: number) {
-  bottle.position.y += BOTTLE_ROTATION * delta
+  bottle.rotation.y += BOTTLE_ROTATION * delta
 }

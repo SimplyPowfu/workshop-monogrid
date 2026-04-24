@@ -4,6 +4,7 @@ import {
   Scene,
   SRGBColorSpace,
   TextureLoader,
+  MeshBasicMaterial
 } from 'three'
 
 import bakeUrl from '../assets/bake.png?url'
@@ -18,18 +19,19 @@ export async function loadModel (scene: Scene) {
 
 	const gltfLoader = new GLTFLoader()
 	let gltf = await gltfLoader.loadAsync(scenaUrl)
-	let model = gltf.scene
+	const scena = gltf.scene
 
-	model.traverse((node) => {
+	scena.traverse((node) => {
 		if (node instanceof Mesh && node.material) {
-			node.material.envMapIntensity = 1.5
+			node.material.envMapIntensity = 1
+			node.material = new MeshBasicMaterial({ map: bakeTexture });
 		}
 	})
-	scene.add(model)
+	scene.add(scena)
 
 	gltf = await gltfLoader.loadAsync(bottleUrl);
-	model = gltf.scene
+	const bottles = gltf.scene
 
-	scene.add(model);
-	return model
+	scene.add(bottles);
+	return { scena, bottles }
 }

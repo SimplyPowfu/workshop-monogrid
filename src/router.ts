@@ -11,12 +11,14 @@ const router = createRouter({
     {
       path: '/pub',
       name: 'three',
-      component: () => import('@/views/ThreeJs.vue')
-    },
-    {
-      path: '/one',
-      name: 'example',
-      component: () => import('@/views/one.vue')
+      component: () => import('@/views/ThreeJs.vue'),
+      children: [
+        {
+          path: ':id', 
+          name: 'marker-detail',
+          component: () => import('@/views/MarkerDetail.vue') 
+        }
+      ]
     },
   ],
 })

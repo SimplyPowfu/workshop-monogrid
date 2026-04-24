@@ -17,13 +17,11 @@ export async function createEngine(container: HTMLElement): Promise<EngineContex
   const aspect = container.clientWidth / container.clientHeight
   const camera = new PerspectiveCamera(55, aspect, 0.1, 1000)
 
-  const renderer = new WebGLRenderer({antialias: true})
+  const renderer = new WebGLRenderer({antialias: true, canvas: container})
   renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setSize(container.clientWidth, container.clientHeight)
   renderer.toneMapping = NeutralToneMapping;
   renderer.toneMappingExposure = 1.0
-
-  container.appendChild(renderer.domElement)
 
   function onResize () {
     const width = container.clientWidth

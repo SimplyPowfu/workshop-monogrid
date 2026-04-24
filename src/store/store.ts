@@ -13,11 +13,11 @@ export type Hotspot = {
 export const store = reactive<Record<string, Hotspot>>({
   bottle: {
     objectName: 'Bottle',
-    offsetY: 0.35,
+    offsetY: 0.5,
     x: 0,
     y: 0,
     visible: false,
-    label: 'Bottle',
+    label: 'Jack Daniel\'s',
     description: `cuore della bottiglia. Quella resina interna ha una rifrazione della luce pazzesca.
 	Sembra davvero che il distillato sia ancora lì, sospeso nel tempo, ma con una brillantezza che il liquido reale non avrebbe mai.
 	Cattura i riflessi della stanza e li rimanda fuori con una tonalità calda, quasi ambrata.
@@ -27,7 +27,7 @@ export const store = reactive<Record<string, Hotspot>>({
   },
   leftBottle: {
     objectName: 'BottleLeft',
-    offsetY: 0.1,
+    offsetY: 0.5,
     label: 'BottleLeft',
     x: 0,
     y: 0,
@@ -41,7 +41,7 @@ export const store = reactive<Record<string, Hotspot>>({
   },
   rightBottle: {
     objectName: 'BottleRight',
-    offsetY: 0.35,
+    offsetY: 0.5,
     label: 'BottleRight',
     x: 0,
     y: 0,

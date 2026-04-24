@@ -112,9 +112,7 @@ body, html {
   z-index: 1; 
   pointer-events: none;
 }
-</style>
 
-<!-- <style scoped>
 /* Fade transition for the router view */
 .fade-enter-active, .fade-leave-active {
   transition: opacity 0.45s ease;
@@ -141,4 +139,4 @@ body, html {
 .hotspot-group-leave-to {
   opacity: 0;
 }
-</style> -->
+</style>
