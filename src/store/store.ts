@@ -1,7 +1,10 @@
+import { MeshStandardMaterial, Object3D } from 'three'
+import gsap from 'gsap'
 import { reactive } from 'vue'
 
 export type Hotspot = {
   objectName: string
+  objectScene: Object3D | null
   offsetY: number
   x: number
   y: number
@@ -13,6 +16,7 @@ export type Hotspot = {
 export const store = reactive<Record<string, Hotspot>>({
   bottle: {
     objectName: 'Bottle',
+    objectScene: null,
     offsetY: 0.5,
     x: 0,
     y: 0,
@@ -27,6 +31,7 @@ export const store = reactive<Record<string, Hotspot>>({
   },
   leftBottle: {
     objectName: 'BottleLeft',
+    objectScene: null,
     offsetY: 0.5,
     label: 'BottleLeft',
     x: 0,
@@ -41,6 +46,7 @@ export const store = reactive<Record<string, Hotspot>>({
   },
   rightBottle: {
     objectName: 'BottleRight',
+    objectScene: null,
     offsetY: 0.5,
     label: 'BottleRight',
     x: 0,
@@ -54,3 +60,24 @@ export const store = reactive<Record<string, Hotspot>>({
 	creando quell'atmosfera da club esclusivo o da ufficio di un produttore discografico.`,
   },
 })
+
+export function animateMaterials(
+  materials: MeshStandardMaterial[], 
+  intensity: number, 
+  duration: number = 0.5
+) {
+  if (materials.length === 0) return
+
+  materials.forEach(mat => {
+    if (intensity > 0) {
+      mat.emissive.set(0xFFB856)
+    }
+
+    gsap.to(mat, {
+      emissiveIntensity: intensity,
+      duration: duration,
+      ease: 'power2.out',
+      overwrite: true
+    })
+  })
+}

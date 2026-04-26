@@ -1,6 +1,6 @@
 import { HDRJPGLoader } from '@monogrid/gainmap-js';
 import { WebGLRenderer, EquirectangularReflectionMapping, PMREMGenerator, Scene } from 'three';
-import hdrjpgUrl from '../assets/autumn_park_4k.jpg?url'
+import hdrjpgUrl from '../assets/moonlit_golf_4k.jpg?url'
 
 export async function loadEnvironment (scene: Scene, renderer: WebGLRenderer) {
 	if (!scene || !renderer) throw new Error('[ENVIROMENTS] dati mancanti')

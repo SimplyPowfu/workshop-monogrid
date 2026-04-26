@@ -5,6 +5,7 @@ import { Object3D, Timer, Vector3, type Object3DEventMap } from 'three'
 import { watch } from 'vue'
 
 import router from '@/router'
+import { store } from '@/store/store'
 
 import { createAnimation } from './animations'
 import { loadEnvironment } from './enviroment'
@@ -42,6 +43,12 @@ export async function initScene (container: HTMLCanvasElement): Promise<Result> 
   controls.target.set(0, 3, 0)
 
   const markers = createMarkers(model.bottles)
+  markers.forEach(m => {
+    const entry = store[m.id]
+    if (entry) {
+      entry.objectScene = m.object
+    }
+  })
 
   const _target = new Vector3()
   const defaultFov = camera.fov

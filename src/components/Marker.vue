@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, markRaw, watch , ref} from 'vue'
 import { useRouter } from 'vue-router'
 
-import { store } from '@/store/store'
-import type { Object3D } from 'three';
+import { store, animateMaterials } from '@/store/store'
+import type { Object3D, Mesh, MeshStandardMaterial } from 'three';
 
 const props = defineProps<{
   id: string
@@ -12,9 +12,8 @@ const props = defineProps<{
 }>()
 
 const router = useRouter()
-
+const isClicked = ref(false)
 const marker = computed(() => store[props.id])
-
 const markerStyle = computed(() => {
   const h = marker.value
   if (!h?.visible) return { display: 'none' }
@@ -25,30 +24,39 @@ const markerStyle = computed(() => {
 
 const targetMaterials = computed(() => {
   if (!props.bottles) return []
+  const h = marker.value
+  let bottle
+  if (h?.objectName === 'Bottle')
+    bottle = props.bottles.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0003') as Mesh
+  else if (h?.objectName === 'BottleLeft')
+    bottle = props.bottles.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0005') as Mesh
+  else if (h?.objectName === 'BottleRight')
+    bottle = props.bottles.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0004') as Mesh
+  else {
+    console.warn(`Mesh non trovata`);
+    return []
+  }
 
-  // Usa il metodo nativo di Three.js per cercare nei figli dell'Object3D
-  const bottle = props.bottles.getObjectByName(props.id) as Mesh
-  if (!bottle || !bottle.material) return []
-
-  // Gestione robusta: in Three.js il materiale può essere un array o un oggetto singolo
+  if (!bottle.material) return []
   const materialsArray = Array.isArray(bottle.material) 
     ? bottle.material 
     : [bottle.material]
 
-  // Filtra solo i materiali che supportano l'emissiveIntensity (Standard o Physical)
   return materialsArray.filter(m => 'emissiveIntensity' in m) as MeshStandardMaterial[]
 })
 
 function onClick () {
+  isClicked.value = true
   router.push(props.route)
 }
 
 function onHoverEnter () {
-  console.log('Enter')
+  animateMaterials(targetMaterials.value, 25)
 }
 
 function onHoverLeave () {
-  console.log("leave")
+  if (isClicked.value || router.currentRoute.value.path.includes(props.route)) return
+    animateMaterials(targetMaterials.value, 0)
 }
 </script>
 
