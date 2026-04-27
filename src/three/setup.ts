@@ -16,9 +16,10 @@ export async function createEngine(container: HTMLElement): Promise<EngineContex
   const scene = new Scene()
   const aspect = container.clientWidth / container.clientHeight
   const camera = new PerspectiveCamera(55, aspect, 0.1, 1000)
+  const pixelRatio = Math.min(window.devicePixelRatio, 2)
 
   const renderer = new WebGLRenderer({antialias: true, canvas: container})
-  renderer.setPixelRatio(window.devicePixelRatio)
+  renderer.setPixelRatio(pixelRatio)
   renderer.setSize(container.clientWidth, container.clientHeight)
   renderer.toneMapping = NeutralToneMapping;
   renderer.toneMappingExposure = 1.0
@@ -29,7 +30,7 @@ export async function createEngine(container: HTMLElement): Promise<EngineContex
     camera.aspect = width / height
     camera.updateProjectionMatrix()
     renderer.setSize(width, height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   }
   return { scene, camera, renderer, onResize }
 }

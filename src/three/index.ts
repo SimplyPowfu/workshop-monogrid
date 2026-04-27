@@ -1,6 +1,5 @@
 import gsap from 'gsap'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { Inspector } from 'three/addons/inspector/Inspector.js'
 import { Object3D, Timer, Vector3, type Object3DEventMap } from 'three'
 import { watch } from 'vue'
 
@@ -21,13 +20,23 @@ export interface Result {
 export async function initScene (container: HTMLCanvasElement): Promise<Result> {
 	
   const { scene, camera, renderer, onResize } = await createEngine(container)
-  window.addEventListener('resize', onResize)
   await loadEnvironment(scene, renderer)
 
   const model = await loadModel(scene)
   const postProcessing = createPostProcessing(renderer, scene, camera)
 
   camera.position.set(3.5, 3, 0)
+
+  const handleResize = () => {
+    // 1. Esegui la logica base di setup.ts (aggiorna Camera e Renderer)
+    onResize() 
+
+    // 2. Aggiorna il Post-Processing e i suoi buffer (IL FIX PER LO SGRANAMENTO)
+    const width = window.innerWidth
+    const height = window.innerHeight
+    postProcessing.setSize(width, height)
+  }
+  window.addEventListener('resize', handleResize)
 
   const controls = new OrbitControls(camera, renderer.domElement)
   controls.enableDamping = true
@@ -69,21 +78,16 @@ export async function initScene (container: HTMLCanvasElement): Promise<Result> 
     { immediate: true, flush: 'sync' }
   )
 
-  const timer = new Timer()
   renderer.setAnimationLoop(() => {
-    timer.update()
-
     controls.update()
-
     updateMarkerScreenPositions(markers, camera, container)
-
     postProcessing.render()
   })
 
   const cleanup = () => {
     stopWatch()
     renderer.setAnimationLoop(null)
-    window.removeEventListener('resize', onResize)
+    window.removeEventListener('resize', handleResize)
     controls.dispose()
     renderer.dispose()
   }

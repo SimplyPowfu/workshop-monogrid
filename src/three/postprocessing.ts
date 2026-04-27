@@ -10,6 +10,7 @@ export function createPostProcessing(
   camera: PerspectiveCamera
 ) {
   const composer = new EffectComposer(renderer);
+  composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
   const renderPass = new RenderPass(scene, camera);
   composer.addPass(renderPass);
