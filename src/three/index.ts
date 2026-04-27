@@ -7,7 +7,6 @@ import { watch } from 'vue'
 import router from '@/router'
 import { store } from '@/store/store'
 
-import { createAnimation } from './animations'
 import { loadEnvironment } from './enviroment'
 import { createMarkers, updateMarkerScreenPositions } from './store'
 import { loadModel } from './loadModels'
@@ -22,12 +21,10 @@ export interface Result {
 export async function initScene (container: HTMLCanvasElement): Promise<Result> {
 	
   const { scene, camera, renderer, onResize } = await createEngine(container)
+  window.addEventListener('resize', onResize)
   await loadEnvironment(scene, renderer)
 
   const model = await loadModel(scene)
-  
-  // const animations = createAnimation(model) animazione da fare dalla home 
-
   const postProcessing = createPostProcessing(renderer, scene, camera)
 
   camera.position.set(3.5, 3, 0)

@@ -31,6 +31,9 @@
 <template>
   <div class="grain-overlay"></div>
   <canvas ref="canvasRef"></canvas>
+  <a href="/" class="nav-logo">
+    PROOF<span>BEAM</span>
+  </a>
 
   <TransitionGroup name="hotspot-group">
     <template v-if="showMarker && bottles">
@@ -63,4 +66,14 @@
     outline: none;
     pointer-events: auto;
   }
+  .nav-logo {
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    color: var(--cream);
+    text-decoration: none;
+  }
+.nav-logo span { color: var(--gold); }
 </style>

@@ -38,9 +38,6 @@ export function updateMarkerScreenPositions (
 ) {
   const width = container.clientWidth
   const height = container.clientHeight
-  // Dopo OrbitControls.update(), la camera ha position/quaternion nuovi ma matrixWorld può essere "stale":
-  // `project()` usa quella matrice quindi senza questo update
-  // i marker sarebbero un frame in ritardo.
   camera.updateMatrixWorld()
 
   for (const marker of markers) {
@@ -49,8 +46,7 @@ export function updateMarkerScreenPositions (
 
     marker.object.getWorldPosition(_worldPos)
     _worldPos.y += marker.offsetY
-    // Clip space: x,y in [-1,1], z profondità; z ≥ 1 -> dietro il far plane -> nascondi.
-    _worldPos.project(camera)
+   _worldPos.project(camera)
 
     if (_worldPos.z >= 1) {
       entry.visible = false
@@ -58,7 +54,6 @@ export function updateMarkerScreenPositions (
     }
 
     entry.visible = true
-    // NDC -> pixel: asse Y dello schermo web cresce verso il basso, quindi il segno su y.
     entry.x = (_worldPos.x * 0.5 + 0.5) * width
     entry.y = (-_worldPos.y * 0.5 + 0.5) * height
   }

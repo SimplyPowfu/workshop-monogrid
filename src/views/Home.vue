@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import type { Object3D } from 'three';
+import { initHomeScene } from '@/three/homeIndex';
+import gsap from 'gsap';
 
 const snapSections = ref<HTMLElement[]>([]);
+const canvasRef = ref<HTMLCanvasElement | null>(null);
+const cleanup = ref<(() => void) | null>(null)
+const bottle = ref<Object3D | null>(null)
 let snapLocked = false;
 let snapLockTimer: number | null = null;
 let touchStartY = 0;
@@ -36,6 +42,14 @@ const getCurrentSectionIndex = () => {
   return closestIdx;
 };
 
+const bottleStates = [
+  { x: 0, y: 0.7, rotX: Math.PI / 2, rotZ: 0 },   // [0] hero
+  { x: -0.5, y: 0, rotX: 0, rotZ: 0.2  },          // [1] sec-1
+  { x: 0.5, y: 0, rotX: 0, rotZ: 0 },         // [2] sec-2
+  { x: -0.5, y: 0, rotX: 0, rotZ: 0.2  },          // [3] sec-3
+  { x: -0.5, y: 0, rotX: 0, rotZ: 0  }            // [4] cta
+];
+
 const scrollToSection = (index: number) => {
   const clampedIndex = Math.max(0, Math.min(index, snapSections.value.length - 1));
   const targetSection = snapSections.value[clampedIndex];
@@ -46,6 +60,28 @@ const scrollToSection = (index: number) => {
     top: targetSection.offsetTop,
     behavior: 'smooth',
   });
+
+  if (bottle.value && bottleStates[clampedIndex]) {
+    const state = bottleStates[clampedIndex];
+    
+    gsap.killTweensOf(bottle.value.position);
+    gsap.killTweensOf(bottle.value.rotation);
+    gsap.killTweensOf(bottle.value.scale);
+
+    gsap.to(bottle.value.position, {
+      x: state.x,
+      y: state.y,
+      duration: 0.8,
+      ease: "power3.inOut"
+    });
+
+    gsap.to(bottle.value.rotation, {
+      x: state.rotX,
+      z: state.rotZ,
+      duration: 0.8,
+      ease: "power3.inOut"
+    });
+  }
 
   if ('onscrollend' in window) {
     window.addEventListener('scrollend', clearSnapLock, { once: true });
@@ -88,13 +124,32 @@ const handleTouchEnd = (event: TouchEvent) => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   snapSections.value = Array.from(document.querySelectorAll('.snap-section')) as HTMLElement[];
   
   window.addEventListener('wheel', handleWheel, { passive: false });
   window.addEventListener('touchstart', handleTouchStart, { passive: false });
   window.addEventListener('touchmove', handleTouchMove, { passive: false });
   window.addEventListener('touchend', handleTouchEnd, { passive: false });
+  if (canvasRef.value) {
+      const result = await initHomeScene(canvasRef.value)
+      cleanup.value = result.cleanup
+      bottle.value = result.bottle
+    }
+  const state = bottleStates[0];
+  gsap.to(bottle.value.position, {
+      x: state.x,
+      y: state.y,
+      duration: 1.2,
+      ease: "power3.inOut"
+    });
+
+    gsap.to(bottle.value.rotation, {
+      x: state.rotX,
+      z: state.rotZ,
+      duration: 1.2,
+      ease: "power3.inOut"
+    });
 });
 
 onUnmounted(() => {
@@ -102,13 +157,13 @@ onUnmounted(() => {
   window.removeEventListener('touchstart', handleTouchStart);
   window.removeEventListener('touchmove', handleTouchMove);
   window.removeEventListener('touchend', handleTouchEnd);
-  window.removeEventListener('resize', () => {}); 
   if (snapLockTimer) clearTimeout(snapLockTimer);
+  cleanup.value?.()
 });
 </script>
 
 <template>
-  <canvas ref="canvasRef" style="position: fixed;"></canvas>
+  <canvas ref="canvasRef"></canvas>
 
   <nav>
     <a href="#" class="nav-logo" @click.prevent="scrollToSection(0)">
@@ -189,6 +244,19 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  z-index: 0;
+  outline: none;
+  pointer-events: auto;
+}
+
+
 #scroll-container {
   min-height: 100vh;
   background: transparent; 
@@ -198,7 +266,6 @@ onUnmounted(() => {
   z-index: 2;
 }
 
-/* ---- NAV ---- */
 nav {
   position: fixed;
   top: 0; left: 0; right: 0;
@@ -239,13 +306,11 @@ nav {
 }
 .nav-links a:hover { color: var(--gold); }
 
-/* ---- SNAP SECTIONS ---- */
 .snap-section {
   height: 100vh;
   width: 100%;
 }
 
-/* ---- CORNER DECORATION ---- */
 .corner { position: absolute; width: 55px; height: 55px; opacity: .25; }
 .corner.tl { top: 2rem; left: 2rem; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
 .corner.tr { top: 2rem; right: 2rem; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); }
@@ -260,7 +325,6 @@ nav {
   animation: fadeIn .9s ease 1.1s forwards;
 }
 
-/* ---- HERO ---- */
 .hero {
   display: flex;
   flex-direction: column;
@@ -271,13 +335,12 @@ nav {
 }
 
 .logo {
-  width: 400px;
+  width: 500px;
   height: auto;
   max-width: 80vw; 
   object-fit: contain;
   opacity: 0;
-  animation: fadeUp .9s ease .75s forwards;
-  background: radial-gradient(ellipse at center, #2b0f18 0%, var(--black) 70%);
+  animation: fadeUp .9s ease .1s forwards;
 }
 
 .scroll-hint {
@@ -307,7 +370,6 @@ nav {
   animation: bounce 1.6s ease infinite;
 }
 
-/* ---- PRODUCT SECTIONS ---- */
 .psec {
   display: flex;
   align-items: center;
@@ -392,7 +454,6 @@ nav {
   max-width: 400px;
 }
 
-/* ---- BUTTON ---- */
 .btn-buy {
   display: inline-block;
   padding: .9rem 2.4rem;
@@ -419,7 +480,6 @@ nav {
 .btn-buy:hover { color: var(--black); }
 .btn-buy:hover::before { left: 0; }
 
-/* ---- CTA SECTION ---- */
 .cta {
   display: flex;
   flex-direction: column;
@@ -460,7 +520,6 @@ nav {
   margin-bottom: 3rem;
 }
 
-/* ---- RESPONSIVE ---- */
 @media (max-width: 768px) {
   nav { padding: 1.2rem 2rem; }
   .nav-links { display: none; }
@@ -485,7 +544,6 @@ nav {
   .psec.right .pinfo .btn-buy { float: none; }
 }
 
-/* ---- KEYFRAMES ---- */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(28px); }
   to   { opacity: 1; transform: translateY(0); }

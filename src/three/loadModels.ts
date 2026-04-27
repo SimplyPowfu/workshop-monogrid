@@ -9,7 +9,7 @@ import {
 
 import bakeUrl from '../assets/night_bake.png?url'
 import scenaUrl from '../assets/scena.glb?url'
-import bottleUrl from '../assets/bottles.glb?url'
+import bottleUrl from '../assets/bottles2.glb?url'
 
 export async function loadModel (scene: Scene) {
 	const textureLoader = new TextureLoader();
@@ -31,8 +31,6 @@ export async function loadModel (scene: Scene) {
 
 	gltf = await gltfLoader.loadAsync(bottleUrl);
 	const bottles = gltf.scene
-	const lampshade = bottles.getObjectByName('Tref012_LampShade001_B_02_BlackFabric_0003') as Mesh
-  	lampshade.material.color.set('black')
 	scene.add(bottles);
 	return { scena, bottles }
 }
