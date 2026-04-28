@@ -40,6 +40,5 @@ __screenshots__/
 *.timestamp-*-*.mjs
 
 package-*
-*/assets
 
 uno.config.ts
