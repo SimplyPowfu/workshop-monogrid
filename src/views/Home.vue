@@ -47,7 +47,7 @@ const bottleStates = [
   { x: -0.5, y: 0, rotX: 0, rotZ: 0.2  },          // [1] sec-1
   { x: 0.5, y: 0, rotX: 0, rotZ: 0 },         // [2] sec-2
   { x: -0.5, y: 0, rotX: 0, rotZ: 0.2  },          // [3] sec-3
-  { x: -0.5, y: 0, rotX: 0, rotZ: 0  }            // [4] cta
+  { x: -0.5, y: 0, rotX: 0, rotZ: 0.2  }            // [4] cta
 ];
 
 const scrollToSection = (index: number) => {
@@ -136,20 +136,6 @@ onMounted(async () => {
       cleanup.value = result.cleanup
       bottle.value = result.bottle
     }
-  const state = bottleStates[0];
-  gsap.to(bottle.value.position, {
-      x: state.x,
-      y: state.y,
-      duration: 1.2,
-      ease: "power3.inOut"
-    });
-
-    gsap.to(bottle.value.rotation, {
-      x: state.rotX,
-      z: state.rotZ,
-      duration: 1.2,
-      ease: "power3.inOut"
-    });
 });
 
 onUnmounted(() => {
@@ -274,7 +260,7 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 1.4rem 4rem;
-  background: linear-gradient(180deg, rgba(18,9,13,0.95) 0%, transparent 100%);
+  background: linear-gradient(180deg, var(--dark) 0%, transparent 100%);
   pointer-events: auto; 
 }
 

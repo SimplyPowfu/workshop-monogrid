@@ -20,7 +20,7 @@ export interface Result {
 export async function initScene (container: HTMLCanvasElement): Promise<Result> {
 	
   const { scene, camera, renderer, onResize } = await createEngine(container)
-  await loadEnvironment(scene, renderer)
+  await loadEnvironment(scene, renderer, true)
 
   const model = await loadModel(scene)
   const postProcessing = createPostProcessing(renderer, scene, camera)
@@ -28,10 +28,7 @@ export async function initScene (container: HTMLCanvasElement): Promise<Result> 
   camera.position.set(3.5, 3, 0)
 
   const handleResize = () => {
-    // 1. Esegui la logica base di setup.ts (aggiorna Camera e Renderer)
     onResize() 
-
-    // 2. Aggiorna il Post-Processing e i suoi buffer (IL FIX PER LO SGRANAMENTO)
     const width = window.innerWidth
     const height = window.innerHeight
     postProcessing.setSize(width, height)

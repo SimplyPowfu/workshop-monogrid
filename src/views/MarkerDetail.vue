@@ -22,9 +22,9 @@ const targetMaterials = computed(() => {
   if (marker.value?.objectName === 'Bottle')
     bottle = marker.value?.objectScene?.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0003') as Mesh
   else if (marker.value?.objectName === 'BottleLeft')
-    bottle = marker.value?.objectScene?.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0005') as Mesh
+    bottle = marker.value?.objectScene?.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0001') as Mesh
   else if (marker.value?.objectName === 'BottleRight')
-    bottle = marker.value?.objectScene?.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0004') as Mesh
+    bottle = marker.value?.objectScene?.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0002') as Mesh
   else {
     console.warn(`Mesh non trovata`);
     return []

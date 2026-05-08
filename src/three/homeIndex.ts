@@ -2,6 +2,7 @@ import {  Timer, AmbientLight, DirectionalLight, type Object3D} from 'three'
 
 import { loadHomeModel } from './loadHomeModels.' 
 import { createEngine } from './setup'
+import { loadEnvironment } from './enviroment';
 
 export interface Result {
   cleanup: () => void;
@@ -11,13 +12,14 @@ export interface Result {
 export async function initHomeScene (container: HTMLCanvasElement): Promise<Result> {
 	
   const { scene, camera, renderer, onResize } = await createEngine(container)
+  await loadEnvironment(scene, renderer, false)
   window.addEventListener('resize', onResize)
   const bottle = await loadHomeModel(scene)
 
   const ambientLight = new AmbientLight(0xffffff, 4)
   scene.add(ambientLight)
 
-  const directionalLight = new DirectionalLight(0xffffff, 3)
+  const directionalLight = new DirectionalLight(0xffffff, 10)
   directionalLight.position.set(5, 5, 5)
   scene.add(directionalLight)
 

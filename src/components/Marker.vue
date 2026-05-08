@@ -29,15 +29,14 @@ const targetMaterials = computed(() => {
   if (h?.objectName === 'Bottle')
     bottle = props.bottles.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0003') as Mesh
   else if (h?.objectName === 'BottleLeft')
-    bottle = props.bottles.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0005') as Mesh
+    bottle = props.bottles.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0001') as Mesh
   else if (h?.objectName === 'BottleRight')
-    bottle = props.bottles.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0004') as Mesh
-  else {
-    console.warn(`Mesh non trovata`);
+    bottle = props.bottles.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0002') as Mesh
+  if (!bottle || !bottle.material) {
+    console.warn(`Mesh non trovata per ${h.objectName}`);
     return []
   }
 
-  if (!bottle.material) return []
   const materialsArray = Array.isArray(bottle.material) 
     ? bottle.material 
     : [bottle.material]
