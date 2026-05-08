@@ -156,7 +156,7 @@ onUnmounted(() => {
       PROOF<span>BEAM</span>
     </a>
     <ul class="nav-links">
-      <li><a href="/workshop-monogrid/pub">Catalogo</a></li>
+      <li><a href="/pub">Catalogo</a></li>
       <li><a href="#" @click.prevent="scrollToSection(3)">Su di Noi</a></li>
       <li><a href="#" @click.prevent="scrollToSection(4)">Contatti</a></li>
     </ul>
