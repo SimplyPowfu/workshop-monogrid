@@ -31,9 +31,9 @@
 <template>
   <div class="grain-overlay"></div>
   <canvas ref="canvasRef"></canvas>
-  <a href="/" class="nav-logo">
+  <RouterLink to="/" class="nav-logo">
     PROOF<span>BEAM</span>
-  </a>
+  </RouterLink>
 
   <TransitionGroup name="hotspot-group">
     <template v-if="showMarker && bottles">
