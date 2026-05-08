@@ -10,7 +10,7 @@ const cleanup = ref<(() => void) | null>(null)
 const bottle = ref<Object3D | null>(null)
 let snapLocked = false;
 let snapLockTimer: number | null = null;
-let touchStartY = 0;
+let touchStartY: number | undefined = 0;
 
 const clearSnapLock = () => {
   snapLocked = false;
@@ -102,7 +102,7 @@ const handleWheel = (event: WheelEvent) => {
 
 const handleTouchStart = (event: TouchEvent) => {
   if (snapLocked) return;
-  touchStartY = event.touches[0].clientY;
+  touchStartY = event.touches[0]?.clientY;
 };
 
 const handleTouchMove = (event: TouchEvent) => {
@@ -112,8 +112,8 @@ const handleTouchMove = (event: TouchEvent) => {
 const handleTouchEnd = (event: TouchEvent) => {
   if (snapLocked) return;
   
-  const touchEndY = event.changedTouches[0].clientY;
-  const deltaY = touchStartY - touchEndY; 
+  const touchEndY = event.changedTouches[0]?.clientY;
+  const deltaY = touchStartY! - touchEndY!; 
 
   if (Math.abs(deltaY) > 40) { 
     const direction = deltaY > 0 ? 1 : -1;
@@ -156,7 +156,7 @@ onUnmounted(() => {
       PROOF<span>BEAM</span>
     </a>
     <ul class="nav-links">
-      <li><a href="/pub">Catalogo</a></li>
+      <li><a href="/workshop-monogrid/pub">Catalogo</a></li>
       <li><a href="#" @click.prevent="scrollToSection(3)">Su di Noi</a></li>
       <li><a href="#" @click.prevent="scrollToSection(4)">Contatti</a></li>
     </ul>

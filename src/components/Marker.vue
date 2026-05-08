@@ -33,7 +33,7 @@ const targetMaterials = computed(() => {
   else if (h?.objectName === 'BottleRight')
     bottle = props.bottles.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0002') as Mesh
   if (!bottle || !bottle.material) {
-    console.warn(`Mesh non trovata per ${h.objectName}`);
+    console.warn(`Mesh non trovata per ${h?.objectName}`);
     return []
   }
 
