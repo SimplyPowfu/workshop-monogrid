@@ -39,6 +39,4 @@ __screenshots__/
 # Vite
 *.timestamp-*-*.mjs
 
-package-*
-
 uno.config.ts
