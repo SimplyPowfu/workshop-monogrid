@@ -3,6 +3,7 @@
   import { computed, ref, onMounted, onUnmounted } from 'vue';
 
   import Marker from '@/components/Marker.vue'
+  import LoadingScreen from '@/components/Loading.vue';
   import { store } from '@/store/store'
   import { initScene } from '@/three/index'
   import type { Object3D } from 'three';
@@ -15,11 +16,20 @@
   const showMarker = computed(() => route.path === '/pub')
   const canvasRef = ref<HTMLCanvasElement | null>(null);
 
+  //Caricamento dato che su Github Pages è molto lento
+  const progress = ref(0);
+  const isLoading = ref(true);
+
   onMounted(async () => {
     if (canvasRef.value) {
-      const result = await initScene(canvasRef.value)
+      const result = await initScene(canvasRef.value, (p) => {
+        progress.value = Math.round(p);
+      });
       cleanup.value = result.cleanup
       bottles.value = result.bottles
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 500);
     }
   });
 
@@ -29,8 +39,9 @@
 </script>
 
 <template>
-  <div class="grain-overlay"></div>
+  <LoadingScreen :progress="progress" :visible="isLoading" />
   <canvas ref="canvasRef"></canvas>
+
   <RouterLink to="/" class="nav-logo">
     PROOF<span>BEAM</span>
   </RouterLink>
@@ -47,6 +58,7 @@
       />
     </template>
   </TransitionGroup>
+
   <RouterView v-slot="{ Component }">
     <Transition name="fade">
       <component :is="Component" />

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import type { Object3D } from 'three';
+import LoadingScreen from '@/components/Loading.vue';
 import { initHomeScene } from '@/three/homeIndex';
 import gsap from 'gsap';
 
@@ -11,6 +12,9 @@ const bottle = ref<Object3D | null>(null)
 let snapLocked = false;
 let snapLockTimer: number | null = null;
 let touchStartY: number | undefined = 0;
+
+  const progress = ref(0);
+  const isLoading = ref(true);
 
 const clearSnapLock = () => {
   snapLocked = false;
@@ -132,9 +136,14 @@ onMounted(async () => {
   window.addEventListener('touchmove', handleTouchMove, { passive: false });
   window.addEventListener('touchend', handleTouchEnd, { passive: false });
   if (canvasRef.value) {
-      const result = await initHomeScene(canvasRef.value)
+      const result = await initHomeScene(canvasRef.value, (p) => {
+          progress.value = Math.round(p);
+        });
       cleanup.value = result.cleanup
       bottle.value = result.bottle
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 200);
     }
 });
 
@@ -149,6 +158,7 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <LoadingScreen :progress="progress" :visible="isLoading" />
   <canvas ref="canvasRef"></canvas>
 
   <nav>

@@ -3,13 +3,14 @@ import {
 	Mesh,
     Color,
 	MeshPhysicalMaterial,
-	Scene
+	Scene,
+    LoadingManager,
 } from 'three'
 
 import bottleUrl from '../assets/bottle.glb?url'
 
-export async function loadHomeModel(scene: Scene) {
-    const gltfLoader = new GLTFLoader();
+export async function loadHomeModel(scene: Scene, manager: LoadingManager) {
+    const gltfLoader = new GLTFLoader(manager);
     const gltf = await gltfLoader.loadAsync(bottleUrl);
     const bottle = gltf.scene;
     bottle.traverse((child) => {

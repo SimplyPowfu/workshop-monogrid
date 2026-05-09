@@ -7,19 +7,20 @@ import {
   MeshBasicMaterial,
   MeshPhysicalMaterial,
   Color,
+  LoadingManager,
 } from 'three'
 
 import bakeUrl from '../assets/bake.png?url'
 import scenaUrl from '../assets/scena.glb?url'
 import bottleUrl from '../assets/bottles3.glb?url'
 
-export async function loadModel (scene: Scene) {
-	const textureLoader = new TextureLoader();
+export async function loadModel (scene: Scene, manager: LoadingManager) {
+	const textureLoader = new TextureLoader(manager);
 	const bakeTexture = await textureLoader.loadAsync(bakeUrl)
 	bakeTexture.flipY = false
 	bakeTexture.colorSpace = SRGBColorSpace
 
-	const gltfLoader = new GLTFLoader()
+	const gltfLoader = new GLTFLoader(manager)
 	let gltf = await gltfLoader.loadAsync(scenaUrl)
 	const scena = gltf.scene
 

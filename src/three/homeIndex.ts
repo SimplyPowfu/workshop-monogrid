@@ -1,4 +1,4 @@
-import {  Timer, AmbientLight, DirectionalLight, type Object3D} from 'three'
+import {  LoadingManager, Timer, AmbientLight, DirectionalLight, type Object3D} from 'three'
 
 import { loadHomeModel } from './loadHomeModels.' 
 import { createEngine } from './setup'
@@ -9,12 +9,21 @@ export interface Result {
   bottle: Object3D;
 }
 
-export async function initHomeScene (container: HTMLCanvasElement): Promise<Result> {
+export async function initHomeScene (container: HTMLCanvasElement, onProgress?: (p: number) => void): Promise<Result> {
 	
   const { scene, camera, renderer, onResize } = await createEngine(container)
   await loadEnvironment(scene, renderer, false)
-  window.addEventListener('resize', onResize)
-  const bottle = await loadHomeModel(scene)
+  const manager = new LoadingManager();
+  manager.onStart = () => {
+    onProgress?.(0);
+  };
+  manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+    if (onProgress) {
+      const progressPercent = (itemsLoaded / itemsTotal) * 100;
+      onProgress(progressPercent);
+    }
+  };
+  const bottle = await loadHomeModel(scene, manager)
 
   const ambientLight = new AmbientLight(0xffffff, 4)
   scene.add(ambientLight)
@@ -24,6 +33,8 @@ export async function initHomeScene (container: HTMLCanvasElement): Promise<Resu
   scene.add(directionalLight)
 
   camera.position.set(0, 0.68, 2)
+
+  window.addEventListener('resize', onResize)
 
   const timer = new Timer()
   renderer.setAnimationLoop(() => {

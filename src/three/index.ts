@@ -1,6 +1,6 @@
 import gsap from 'gsap'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { Object3D, Timer, Vector3, type Object3DEventMap } from 'three'
+import { LoadingManager, Object3D, Timer, Vector3, type Object3DEventMap } from 'three'
 import { watch } from 'vue'
 
 import router from '@/router'
@@ -17,12 +17,23 @@ export interface Result {
   bottles: Object3D;
 }
 
-export async function initScene (container: HTMLCanvasElement): Promise<Result> {
+export async function initScene (container: HTMLCanvasElement, onProgress?: (p: number) => void): Promise<Result> {
 	
   const { scene, camera, renderer, onResize } = await createEngine(container)
   await loadEnvironment(scene, renderer, true)
 
-  const model = await loadModel(scene)
+  const manager = new LoadingManager();
+  manager.onStart = () => {
+    onProgress?.(0);
+  };
+  manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+    if (onProgress) {
+      const progressPercent = (itemsLoaded / itemsTotal) * 100;
+      onProgress(progressPercent);
+    }
+  };
+
+  const model = await loadModel(scene, manager)
   const postProcessing = createPostProcessing(renderer, scene, camera)
 
   camera.position.set(3.5, 3, 0)
