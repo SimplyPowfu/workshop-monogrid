@@ -46,13 +46,24 @@ const getCurrentSectionIndex = () => {
   return closestIdx;
 };
 
-const bottleStates = [
-  { x: 0, y: 0.7, rotX: Math.PI / 2, rotZ: 0 },   // [0] hero
-  { x: -0.5, y: 0, rotX: 0, rotZ: 0.2  },          // [1] sec-1
-  { x: 0.5, y: 0, rotX: 0, rotZ: 0 },         // [2] sec-2
-  { x: -0.5, y: 0, rotX: 0, rotZ: 0.2  },          // [3] sec-3
-  { x: -0.5, y: 0, rotX: 0, rotZ: 0.2  }            // [4] cta
-];
+const getBottleState = (index: number) => {
+  const isMobile = window.innerWidth <= 768;
+
+  if (index === 0) 
+    return { x: 0, y: 0.7, rotX: Math.PI / 2, rotZ: 0 };
+  if (isMobile)
+    return { x: 0, y: -0.1, rotX: 0, rotZ: 0.1 };
+
+  const desktopStates = [
+    { x: 0, y: 0.7, rotX: Math.PI / 2, rotZ: 0 },   // Hero
+    { x: -0.5, y: 0, rotX: 0, rotZ: 0.2  },         // sec-1
+    { x: 0.5, y: 0, rotX: 0, rotZ: 0 },            // sec-2
+    { x: -0.5, y: 0, rotX: 0, rotZ: 0.2  },         // sec-3
+    { x: -0.5, y: 0, rotX: 0, rotZ: 0.2  }          // cta
+  ];
+
+  return desktopStates[index] || desktopStates[0];
+};
 
 const scrollToSection = (index: number) => {
   const clampedIndex = Math.max(0, Math.min(index, snapSections.value.length - 1));
@@ -65,12 +76,12 @@ const scrollToSection = (index: number) => {
     behavior: 'smooth',
   });
 
-  if (bottle.value && bottleStates[clampedIndex]) {
-    const state = bottleStates[clampedIndex];
+  if (bottle.value) {
+    const state = getBottleState(clampedIndex);
+    if (!state) return
     
     gsap.killTweensOf(bottle.value.position);
     gsap.killTweensOf(bottle.value.rotation);
-    gsap.killTweensOf(bottle.value.scale);
 
     gsap.to(bottle.value.position, {
       x: state.x,
@@ -135,6 +146,10 @@ onMounted(async () => {
   window.addEventListener('touchstart', handleTouchStart, { passive: false });
   window.addEventListener('touchmove', handleTouchMove, { passive: false });
   window.addEventListener('touchend', handleTouchEnd, { passive: false });
+  window.addEventListener('resize', () => {
+    const currentIdx = getCurrentSectionIndex();
+    scrollToSection(currentIdx); 
+  });
   if (canvasRef.value) {
       const result = await initHomeScene(canvasRef.value, (p) => {
           progress.value = Math.round(p);

@@ -94,7 +94,10 @@ body, html {
   min-height: 100vh;
   margin: 0;
   padding: 0;
-  overflow: hidden; 
+  overflow: hidden;
+  overscroll-behavior-y: none;
+  overflow-anchor: none;
+  scroll-behavior: auto !important;
 }
 
 .grain-overlay {
