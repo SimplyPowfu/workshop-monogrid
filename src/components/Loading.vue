@@ -83,7 +83,7 @@ onMounted(() => {
   background: rgba(244, 231, 220, 0.05);
   position: relative;
   overflow: hidden;
-  margin-bottom: 3rem; /* Spazio per il tasto sotto */
+  margin-bottom: 3rem;
 }
 
 .loader-bar {
@@ -92,7 +92,6 @@ onMounted(() => {
   transition: width 0.4s cubic-bezier(0.1, 0.5, 0.5, 1);
 }
 
-/* Stile del tasto Home */
 .home-link {
   font-family: 'Oswald', sans-serif;
   font-size: 0.65rem;

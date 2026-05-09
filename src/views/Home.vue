@@ -50,9 +50,9 @@ const getBottleState = (index: number) => {
   const isMobile = window.innerWidth <= 768;
 
   if (index === 0) 
-    return { x: 0, y: 0.7, rotX: Math.PI / 2, rotZ: 0 };
+    return { x: 0, y: 0.73, rotX: Math.PI / 2, rotZ: 0 };
   if (isMobile)
-    return { x: 0, y: -0.1, rotX: 0, rotZ: 0.1 };
+    return { x: 0, y: -0.1, rotX: 0, rotZ: 0 };
 
   const desktopStates = [
     { x: 0, y: 0.7, rotX: Math.PI / 2, rotZ: 0 },   // Hero
@@ -391,13 +391,13 @@ nav {
 .psec::before {
   content: '';
   position: absolute; inset: 0;
-  background: linear-gradient(90deg, rgba(18,9,13,.9) 0%, rgba(18,9,13,.68) 45%, transparent 100%);
+  background: linear-gradient(90deg, #12090de6 0%, #12090dad 45%, transparent 100%);
   pointer-events: none;
   z-index: 0;
 }
 
 .psec.right::before {
-  background: linear-gradient(270deg, rgba(18,9,13,.9) 0%, rgba(18,9,13,.68) 45%, transparent 100%);
+  background: linear-gradient(270deg, #12090de6 0%, #12090dad 45%, transparent 100%);
 }
 
 .pinfo {
@@ -532,8 +532,24 @@ nav {
 }
 
 @media (max-width: 768px) {
-  nav { padding: 1.2rem 2rem; }
-  .nav-links { display: none; }
+  nav { 
+    padding: 1rem 1.5rem;
+    justify-content: space-between;
+  }
+  .nav-logo {
+    font-size: 1.2rem;
+  }
+  .nav-links { 
+    display: flex;
+    gap: 1rem; 
+  }
+  .nav-links li:not(:first-child) {
+    display: none;
+  }
+  .nav-links a {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+  }
 
   .psec, .psec.right {
     flex-direction: column;
@@ -541,7 +557,7 @@ nav {
   }
   
   .psec::before, .psec.right::before {
-    background: linear-gradient(180deg, rgba(18,9,13,.9) 0%, rgba(18,9,13,.75) 100%);
+    background: linear-gradient(180deg, #12090de6 0%, #12090dbf 100%);
   }
 
   .pinfo, .psec.right .pinfo {

@@ -12,13 +12,22 @@ const props = defineProps<{
 }>()
 
 const router = useRouter()
+
 const isClicked = ref(false)
+
 const marker = computed(() => store[props.id])
 const markerStyle = computed(() => {
   const h = marker.value
+  const route = router.currentRoute.value
+  
   if (!h?.visible) return { display: 'none' }
+  if (route.params.id)
+    return { display: 'none' }
+
   return {
     transform: `translate(${h.x}px, ${h.y}px) translate(-50%, -50%)`,
+    opacity: '1',
+    zIndex: '10'
   }
 })
 

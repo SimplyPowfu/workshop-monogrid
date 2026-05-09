@@ -13,7 +13,7 @@
   const cleanup = ref<(() => void) | null>(null)
   const bottles = ref<Object3D | null>(null)
   const route = useRoute()
-  const showMarker = computed(() => route.path === '/pub')
+  const showMarker = computed(() => route.path.startsWith('/pub'))
   const canvasRef = ref<HTMLCanvasElement | null>(null);
 
   //Caricamento dato che su Github Pages è molto lento

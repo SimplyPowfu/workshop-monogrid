@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, watchEffect } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-
 import { store, animateMaterials } from '@/store/store'
 import type { Mesh, MeshStandardMaterial } from 'three'
 
 const route = useRoute()
 const router = useRouter()
 const isReady = ref(false)
+const isHidden = ref(false)
 const id = route.params.id
 
 const content = computed(() => {
@@ -17,28 +17,19 @@ const content = computed(() => {
 
 const targetMaterials = computed(() => {
   if (typeof id !== 'string' || !(id in store)) return []
-  const marker = computed(() => store[id])
+  const marker = store[id]
   let bottle
-  if (marker.value?.objectName === 'Bottle')
-    bottle = marker.value?.objectScene?.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0003') as Mesh
-  else if (marker.value?.objectName === 'BottleLeft')
-    bottle = marker.value?.objectScene?.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0001') as Mesh
-  else if (marker.value?.objectName === 'BottleRight')
-    bottle = marker.value?.objectScene?.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0002') as Mesh
-  else {
-    console.warn(`Mesh non trovata`);
-    return []
-  }
+  
+  if (marker?.objectName === 'Bottle')
+    bottle = marker.objectScene?.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0003') as Mesh
+  else if (marker?.objectName === 'BottleLeft')
+    bottle = marker.objectScene?.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0001') as Mesh
+  else if (marker?.objectName === 'BottleRight')
+    bottle = marker.objectScene?.getObjectByName('Tref012_BulbGlass030_D_03_BulbGlass_0002') as Mesh
 
-  if (!bottle) {
-    console.warn(`Mesh non trovata per l'oggetto`);
-    return []
-  }
-  if (!bottle.material) return []
-  const materialsArray = Array.isArray(bottle.material) 
-    ? bottle.material 
-    : [bottle.material]
-
+  if (!bottle || !bottle.material) return []
+  
+  const materialsArray = Array.isArray(bottle.material) ? bottle.material : [bottle.material]
   return materialsArray.filter(m => 'emissiveIntensity' in m) as MeshStandardMaterial[]
 })
 
@@ -50,43 +41,240 @@ watchEffect(() => {
   }
 })
 
-function close () {
+function close() {
   animateMaterials(targetMaterials.value, 0)
   router.push('/pub')
+}
+
+function toggleHide() {
+  isHidden.value = !isHidden.value
 }
 </script>
 
 <template>
-  <div v-if="!isReady"
-    class="fixed inset-0 flex items-center justify-center bg-black">
-    <span class="text-white animate-pulse">Caricamento scena...</span>
-  </div>
-
-  <div v-else
-    class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-    @click.self="close"
-  >
-    <div
-      class="relative bg-[rgba(30,30,40,0.95)] border border-white/15
-               rounded-2xl p-10 max-w-120 w-full text-gray-100 shadow-2xl"
-    >
-      <button
-        class="absolute top-4 right-4 bg-white/10 border border-white/20
-                 rounded-full w-9 h-9 text-white cursor-pointer
-                 flex items-center justify-center
-                 transition-colors hover:bg-white/25"
-        @click="close"
-      >
-        ✕
-      </button>
-
-      <h2 class="text-2xl font-bold mb-4 text-white">
-        {{ content?.label ?? 'Unknown hotspot' }}
-      </h2>
-
-      <p class="text-base leading-relaxed text-gray-400 mb-6">
-        {{ content?.description ?? 'No description available' }}
-      </p>
+  <div class="marker-detail-root">
+    
+    <div v-if="!isReady" class="loading-overlay">
+      <span class="loading-text">Caricamento scena...</span>
     </div>
+
+    <template v-else>
+      <div 
+        v-if="!isHidden"
+        class="modal-overlay"
+        @click.self="close"
+      >
+        <div class="info-card">
+          <button class="btn-close" @click="close">✕</button>
+
+          <h2 class="info-title">
+            {{ content?.label ?? 'Oggetto' }}
+          </h2>
+
+          <p class="info-description">
+            {{ content?.description ?? 'Nessuna descrizione disponibile.' }}
+          </p>
+
+          <div class="card-footer">
+            <button class="btn-pill secondary" @click="toggleHide">
+              Nascondi Dettagli
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button 
+        v-else
+        class="btn-pill primary floating-btn"
+        @click="toggleHide"
+      >
+        Mostra Dettagli
+      </button>
+    </template>
+
   </div>
 </template>
+
+<style scoped>
+.marker-detail-root {
+  position: relative;
+  z-index: 100;
+}
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: env(safe-area-inset-top) 1rem env(safe-area-inset-bottom) 1rem;
+  z-index: 150;
+  overflow-y: auto;
+}
+
+.info-card {
+  position: relative;
+  background: rgba(30, 30, 40, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  max-width: 480px;
+  width: 100%;
+  color: #f3f4f6;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  margin: auto; 
+  max-height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+}
+
+.info-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.info-description {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #9ca3af;
+  margin-bottom: 2rem;
+  overflow-y: auto; 
+  padding-right: 5px;
+}
+
+.info-description::-webkit-scrollbar {
+  width: 4px;
+}
+.info-description::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+.info-card .btn-pill:hover {
+  transform: translateY(-2px);
+}
+
+.card-footer {
+  display: flex;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+.btn-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.btn-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-pill {
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.btn-pill.primary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.btn-pill.secondary {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.btn-pill:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+.floating-btn {
+  position: fixed;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 160;
+  transition: transform 0.3s ease, background 0.3s ease, color 0.3s ease;
+}
+.floating-btn:hover {
+  transform: translateX(-50%) translateY(-2px);
+}
+
+/* Animations */
+.loading-text {
+  color: white;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@media (max-height: 500px) {
+  .info-card {
+    padding: 1.5rem;
+    border-radius: 1rem;
+  }
+  
+  .info-title {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    padding-right: 3rem;
+  }
+
+  .info-description {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  .btn-close {
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .floating-btn {
+    bottom: 1rem;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+</style>
