@@ -197,7 +197,7 @@ onUnmounted(() => {
       <div class="hero-rule"></div>
       
       <div class="scroll-hint">
-        <span>Scorri</span>
+        <span>Swipe Up</span>
         <div class="scroll-arrow"></div>
       </div>
     </section>
@@ -391,13 +391,13 @@ nav {
 .psec::before {
   content: '';
   position: absolute; inset: 0;
-  background: linear-gradient(90deg, #12090de6 0%, #12090dad 45%, transparent 100%);
+  background: linear-gradient(90deg, #12090de6 0%, #12090dad 45%, transparent 100%); /* mobile */
   pointer-events: none;
   z-index: 0;
 }
 
 .psec.right::before {
-  background: linear-gradient(270deg, #12090de6 0%, #12090dad 45%, transparent 100%);
+  background: linear-gradient(270deg, #12090de6 0%, #12090dad 45%, transparent 100%); /* mobile */
 }
 
 .pinfo {
@@ -557,7 +557,7 @@ nav {
   }
   
   .psec::before, .psec.right::before {
-    background: linear-gradient(180deg, #12090de6 0%, #12090dbf 100%);
+    background: linear-gradient(0deg, #12090de6 0%, #12090dad 45%, transparent 100%);
   }
 
   .pinfo, .psec.right .pinfo {
