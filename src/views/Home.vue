@@ -343,6 +343,7 @@ nav {
   justify-content: center;
   text-align: center;
   position: relative;
+  background: linear-gradient(0deg, #1d1014 0%, #1d1014ad 45%, transparent 100%);
 }
 
 .logo {
