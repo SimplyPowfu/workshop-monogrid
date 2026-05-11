@@ -12,7 +12,7 @@ import {
 
 import bakeUrl from '../assets/bake.png?url'
 import scenaUrl from '../assets/scena.glb?url'
-import bottleUrl from '../assets/bottles3.glb?url'
+import bottleUrl from '../assets/bottles4.glb?url'
 
 export async function loadModel (scene: Scene, manager: LoadingManager) {
 	const textureLoader = new TextureLoader(manager);
@@ -37,6 +37,8 @@ export async function loadModel (scene: Scene, manager: LoadingManager) {
 	const bottles = gltf.scene
 	bottles.traverse((node) => {
 		if (node instanceof Mesh) {
+			if (node.name.includes("LampShade001"))
+				node.material.color = new Color('black'); //serve per personalizzare dopo il paralume con i colori che vuoi
             if (node.name.includes("LIQUID")) {
 				if (node.name === 'LIQUID003')
 					color = "#ca7d00";
