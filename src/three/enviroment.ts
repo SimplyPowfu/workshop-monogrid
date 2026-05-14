@@ -2,8 +2,9 @@ import { HDRJPGLoader } from '@monogrid/gainmap-js';
 import { WebGLRenderer, EquirectangularReflectionMapping, PMREMGenerator, Scene, Color, LinearFilter } from 'three';
 import hdrjpgUrl from '../assets/autumn_park_4k.jpg?url'
 import hdrjpgHomeUrl from '../assets/metro_noord_4k.jpg?url'
+import hdrjpgNeonUrl from '../assets/neonstudio.jpg?url'
 
-export async function loadEnvironment (scene: Scene, renderer: WebGLRenderer, background: Boolean) {
+export async function loadEnvironment (scene: Scene, renderer: WebGLRenderer, background: Boolean, studio?: Boolean) {
 	if (!scene || !renderer) throw new Error('[ENVIROMENTS] dati mancanti')
   const pmremGenerator = new PMREMGenerator(renderer)
   pmremGenerator.compileEquirectangularShader()
@@ -11,7 +12,14 @@ export async function loadEnvironment (scene: Scene, renderer: WebGLRenderer, ba
   const hdrjpgLoader = new HDRJPGLoader(renderer).setRenderTargetOptions({
     mapping: EquirectangularReflectionMapping
   });
-  const hdri = background ? hdrjpgUrl : hdrjpgHomeUrl;
+
+  let hdri: string;
+  if (background && !studio)
+    hdri = hdrjpgUrl; // Catalogo
+  else if (studio)
+    hdri = hdrjpgNeonUrl; // Personalizza
+  else
+    hdri = hdrjpgHomeUrl; // Homepage
   const result = await hdrjpgLoader.loadAsync(hdri)
   const hdrTexture = result.renderTarget.texture;
 

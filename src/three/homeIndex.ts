@@ -9,7 +9,7 @@ export interface Result {
   bottle: Object3D;
 }
 
-export async function initHomeScene (container: HTMLCanvasElement, onProgress?: (p: number) => void): Promise<Result> {
+export async function initHomeScene (container: HTMLCanvasElement, rotate: boolean ,onProgress?: (p: number) => void): Promise<Result> {
 	
   const { scene, camera, renderer, onResize } = await createEngine(container)
   await loadEnvironment(scene, renderer, false)
@@ -39,9 +39,10 @@ export async function initHomeScene (container: HTMLCanvasElement, onProgress?: 
   const timer = new Timer()
   renderer.setAnimationLoop(() => {
     timer.update()
-	const delta = timer.getDelta()
-	bottle.rotation.y -= 1 * delta;
-	renderer.render(scene, camera)
+    const delta = timer.getDelta()
+    if (rotate)
+      bottle.rotation.y -= 1 * delta;
+    renderer.render(scene, camera)
   })
 
   const cleanup = () => {

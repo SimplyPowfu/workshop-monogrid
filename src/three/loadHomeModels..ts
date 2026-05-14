@@ -47,8 +47,6 @@ export async function loadHomeModel(scene: Scene, manager: LoadingManager) {
     });
 
     bottle.rotation.y = -89.5;
-    bottle.rotation.x = Math.PI / 2;
-    bottle.position.y = 0.7;
     scene.add(bottle);
     return bottle;
 }

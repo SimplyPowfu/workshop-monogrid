@@ -16,7 +16,7 @@ export function createPostProcessing(
   composer.addPass(renderPass);
 
   const resolution = new Vector2(window.innerWidth, window.innerHeight);
-  const bloomPass = new UnrealBloomPass(resolution, 0.4, 0.5, 0.85);
+  const bloomPass = new UnrealBloomPass(resolution, 0.2, 1.0, 0.9);
   composer.addPass(bloomPass);
 
   const outputPass = new OutputPass();

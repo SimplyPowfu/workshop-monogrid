@@ -20,6 +20,11 @@ const router = createRouter({
         }
       ]
     },
+    {
+      path: '/custom',
+      name: 'custom',
+      component: () => import('@/views/Custom.vue')
+    }
   ],
 })
 

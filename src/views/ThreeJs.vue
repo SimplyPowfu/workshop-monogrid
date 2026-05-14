@@ -42,9 +42,11 @@
   <LoadingScreen :progress="progress" :visible="isLoading" />
   <canvas ref="canvasRef"></canvas>
 
-  <RouterLink to="/" class="nav-logo">
-    PROOF<span>BEAM</span>
-  </RouterLink>
+  <nav>
+		<a class="nav-logo">
+			<RouterLink to="/">PROOF<span>BEAM</span></RouterLink>
+		</a>
+	</nav>
 
   <TransitionGroup name="hotspot-group">
     <template v-if="showMarker && bottles">
@@ -78,14 +80,24 @@
     outline: none;
     pointer-events: auto;
   }
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 200; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(180deg, var(--dark) 0%, transparent 100%);
+    pointer-events: auto; 
+  }
   .nav-logo {
-    position: absolute;
     font-family: 'Playfair Display', serif;
     font-size: 2rem;
     font-weight: 900;
     letter-spacing: 0.08em;
     color: var(--cream);
     text-decoration: none;
-  }
-.nav-logo span { color: var(--gold); }
+	}
+	.nav-logo span { color: var(--gold); }
 </style>

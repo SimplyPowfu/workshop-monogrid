@@ -32,11 +32,11 @@ export async function loadModel (scene: Scene, manager: LoadingManager) {
 	})
 	scene.add(scena)
 
-	let color;
 	gltf = await gltfLoader.loadAsync(bottleUrl);
 	const bottles = gltf.scene
 	bottles.traverse((node) => {
 		if (node instanceof Mesh) {
+			let color;
 			if (node.name.includes("LampShade001"))
 				node.material.color = new Color('black'); //serve per personalizzare dopo il paralume con i colori che vuoi
             if (node.name.includes("LIQUID")) {

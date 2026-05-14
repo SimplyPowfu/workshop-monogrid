@@ -13,8 +13,8 @@ let snapLocked = false;
 let snapLockTimer: number | null = null;
 let touchStartY: number | undefined = 0;
 
-  const progress = ref(0);
-  const isLoading = ref(true);
+const progress = ref(0);
+const isLoading = ref(true);
 
 const clearSnapLock = () => {
   snapLocked = false;
@@ -151,11 +151,14 @@ onMounted(async () => {
     scrollToSection(currentIdx); 
   });
   if (canvasRef.value) {
-      const result = await initHomeScene(canvasRef.value, (p) => {
+      const result = await initHomeScene(canvasRef.value, true, (p) => {
           progress.value = Math.round(p);
         });
       cleanup.value = result.cleanup
       bottle.value = result.bottle
+      bottle.value.rotation.y = -89.5;
+      bottle.value.rotation.x = Math.PI / 2;
+      bottle.value.position.y = 0.7;
       setTimeout(() => {
         isLoading.value = false;
       }, 200);
@@ -183,7 +186,7 @@ onUnmounted(() => {
     <ul class="nav-links">
       <li><RouterLink to="/pub">Catalogo</RouterLink></li>
       <li><a href="#" @click.prevent="scrollToSection(3)">Su di Noi</a></li>
-      <li><a href="#" @click.prevent="scrollToSection(4)">Contatti</a></li>
+      <li><a href="#" @click.prevent="scrollToSection(4)">Personalizza</a></li>
     </ul>
   </nav>
 
@@ -248,7 +251,11 @@ onUnmounted(() => {
       <h2 class="cta-title">Hai un progetto<br>speciale in mente?</h2>
       <div class="hero-rule"></div>
       <p class="cta-sub">Realizziamo soluzioni su misura</p>
-      <button class="btn-buy">Contattaci</button>
+      <button class="btn-buy">
+        <RouterLink to="/custom">
+          Personalizza
+        </RouterLink>
+      </button>
     </section>
 
   </div>
@@ -489,7 +496,7 @@ nav {
   transition: left .3s;
   z-index: -1;
 }
-.btn-buy:hover { color: var(--black); }
+.btn-buy:hover { color: var(--gold-light); }
 .btn-buy:hover::before { left: 0; }
 
 .cta {
@@ -508,7 +515,7 @@ nav {
   font-weight: 300;
   font-size: clamp(.6rem, 2vw, .78rem);
   letter-spacing: .55em;
-  color: var(--gold);
+  color: var(--gold-light);
   text-transform: uppercase;
   margin-bottom: 1.4rem;
 }
@@ -527,7 +534,7 @@ nav {
   font-weight: 300;
   font-size: clamp(.65rem, 2vw, .82rem);
   letter-spacing: .45em;
-  color: var(--gold-dim);
+  color: var(--gold-light);
   text-transform: uppercase;
   margin-bottom: 3rem;
 }
